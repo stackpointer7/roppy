@@ -13,7 +13,7 @@
 int main(int argc, char **argv) {
   if (argc != 3)
     error(err_str) const int amount = atoi(argv[2]);
-  char *ignore[] = {"hlt",  "cli",  "sti",   "in",    "ins",  "out",  "outs",
+  const char * const ignore[] = {"hlt",  "cli",  "sti",   "in",    "ins",  "out",  "outs",
                     "lgdt", "lidt", "lmsw",  "smsw",  "ud2",  "jmp",  "je",
                     "jz",   "jne",  "jnz",   "ja",    "jnbe", "jae",  "jnb",
                     "jb",   "jnae", "jbe",   "jna",   "jg",   "jnle", "jge",
@@ -30,14 +30,13 @@ int main(int argc, char **argv) {
   fread(shdr, sizeof ehdr, ehdr.e_shnum, fp);
   Elf64_Shdr shstrtab = shdr[ehdr.e_shstrndx];
   size_t sh_size = shstrtab.sh_size, start = 0, end = 0, addr = 0;
-  char *shstrtab_data = malloc(sh_size);
+  char * const shstrtab_data = malloc(sh_size);
   fseek(fp, shstrtab.sh_offset, SEEK_SET);
   if (!fread(shstrtab_data, 1, shstrtab.sh_size, fp))
     error(err_str);
   for (int i = 0; i < ehdr.e_shnum; i++)
     if (!strcmp(&shstrtab_data[shdr[i].sh_name], ".text"))
-      start = shdr[i].sh_offset, end = start + shdr[i].sh_size,
-      addr = shdr[i].sh_addr;
+      start = shdr[i].sh_offset, end = start + shdr[i].sh_size, addr = shdr[i].sh_addr;
   rewind(fp);
   fseek(fp, start, SEEK_SET);
   char fbuf[end];
